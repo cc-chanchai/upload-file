@@ -20,14 +20,17 @@ public class Upload {
     private UserRepository userRepository;
 
     @PostMapping("/upload")
-    public ResponseEntity handleUpload(@RequestParam("file")MultipartFile file){
+    public ResponseEntity handleUpload(@RequestParam("file")MultipartFile file, @RequestParam("name")String name){
         User user = new User();
+        user.setName(name);
         Path path = Paths.get("./upload");
         try {
             if (!Files.isDirectory(path)){
                 Files.createDirectories(path);
             }
             Files.copy(file.getInputStream(), path.resolve(file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+            user.setPictureFile(file.getOriginalFilename());
+            userRepository.save(user);
         }catch (Exception e) {
             e.printStackTrace();
 

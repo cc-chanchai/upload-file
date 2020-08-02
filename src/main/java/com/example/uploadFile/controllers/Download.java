@@ -1,5 +1,7 @@
 package com.example.uploadFile.controllers;
 
+import com.example.uploadFile.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -13,6 +15,10 @@ import java.nio.file.Paths;
 
 @RestController
 public class Download {
+
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping("/download/{fileName}")
     public ResponseEntity handleDownload(@PathVariable String fileName){
         Path path = Paths.get("./upload");
@@ -24,8 +30,13 @@ public class Download {
             error.printStackTrace();
         }
         return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG)
+                .contentType(MediaType.IMAGE_JPEG)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename = \"" + resource.getFilename() + "\"")
                 .body(resource);
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity handleUser(){
+        return ResponseEntity.ok(userRepository.findAll());
     }
 }
